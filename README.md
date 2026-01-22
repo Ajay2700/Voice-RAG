@@ -48,6 +48,11 @@ Voice RAG Agent
 7. **Voice Synthesis**: Text responses are converted to speech using OpenAI TTS
 8. **Audio Playback**: Audio is streamed and made available for download
 
+
+<img width="1900" height="717" alt="image" src="https://github.com/user-attachments/assets/df79f706-6ccd-41fa-a2dc-171913d637c1" />
+
+
+
 ## 📦 Prerequisites
 
 - Python 3.8 or higher
