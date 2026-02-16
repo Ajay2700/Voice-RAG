@@ -210,21 +210,4 @@ Default voice: `coral`
 - **Chunk Size**: Adjust `CHUNK_SIZE` and `CHUNK_OVERLAP` in `config/settings.py` for different document types.
 - **Search Limit**: Modify `SEARCH_LIMIT` in `config/settings.py` to retrieve more or fewer context documents.
 
-## 📝 License
 
-This project is part of a Generative AI YouTube tutorial series.
-
-## 🤝 Contributing
-
-This is a tutorial project. Feel free to experiment and modify as needed!
-
-## 📚 Additional Resources
-
-- [Streamlit Documentation](https://docs.streamlit.io/)
-- [Qdrant Documentation](https://qdrant.tech/documentation/)
-- [OpenAI API Documentation](https://platform.openai.com/docs/)
-- [LangChain Documentation](https://python.langchain.com/)
-
----
-
-**Note**: Make sure to keep your API keys secure and never commit them to version control!
