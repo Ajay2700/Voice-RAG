@@ -29,9 +29,6 @@
 ### Full Structured Response Panel
 ![Full Response](docs/screenshots/ui-response-full.png)
 
-### Browser Tab Logo (Favicon)
-![Favicon Logo](web/favicon.png)
-
 ---
 
 ## 🧠 What Is This?
