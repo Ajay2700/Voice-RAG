@@ -1,0 +1,9 @@
+.git
+.venv
+.venv311
+__pycache__
+docs
+assets
+*.log
+*.mp3
+node_modules

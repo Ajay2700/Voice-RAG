@@ -6,7 +6,6 @@ from typing import List, Tuple
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
 from qdrant_client.http.models import Distance, VectorParams
-from fastembed import TextEmbedding
 from openai import OpenAI
 
 from config.settings import COLLECTION_NAME, SCORE_THRESHOLD
@@ -83,6 +82,9 @@ class AdaptiveEmbedder:
         self._openai_model = "text-embedding-3-small"
 
         try:
+            # Import lazily so deployments can run without fastembed installed.
+            from fastembed import TextEmbedding  # type: ignore
+
             self._fastembed = TextEmbedding()
             _ = self.embed(["test"])
         except Exception:

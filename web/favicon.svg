@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect width="64" height="64" rx="14" fill="#0d1117"/>
+  <defs>
+    <linearGradient id="g1" x1="32" y1="8" x2="32" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+  </defs>
+  <!-- Mic capsule -->
+  <rect x="24" y="8" width="16" height="24" rx="8" stroke="url(#g1)" stroke-width="3" fill="none"/>
+  <!-- Mic stand arc -->
+  <path d="M18 30 Q18 46 32 46 Q46 46 46 30" stroke="url(#g1)" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Stand stem -->
+  <line x1="32" y1="46" x2="32" y2="54" stroke="url(#g1)" stroke-width="3" stroke-linecap="round"/>
+  <!-- Base -->
+  <line x1="24" y1="54" x2="40" y2="54" stroke="url(#g1)" stroke-width="3" stroke-linecap="round"/>
+  <!-- Sound waves left -->
+  <path d="M12 28 Q9 32 12 36" stroke="url(#g1)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M7 24 Q2 32 7 40" stroke="url(#g1)" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+  <!-- Sound waves right -->
+  <path d="M52 28 Q55 32 52 36" stroke="url(#g1)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M57 24 Q62 32 57 40" stroke="url(#g1)" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+</svg>

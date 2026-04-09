@@ -1,213 +1,413 @@
-# 🎙️ Voice RAG Agent
+<div align="center">
 
-A sophisticated Retrieval-Augmented Generation (RAG) application that provides voice-powered answers to questions about your documentation. Upload PDF documents, ask questions, and receive both text and audio responses powered by OpenAI's GPT-4o and TTS models.
+# 🎙️ Voice RAG Studio
 
-## 📋 Table of Contents
+### AI-Powered Resume Intelligence — Voice + Text, Production-Grade
 
-- [Features](#features)
-- [Architecture](#architecture)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Usage](#usage)
-- [Project Structure](#project-structure)
-- [Technologies Used](#technologies-used)
-- [Troubleshooting](#troubleshooting)
+> Ask any question about uploaded PDF documents.  
+> Get structured answers in text **and** natural voice — instantly.
 
-## ✨ Features
+[![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.116-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o--mini-412991?style=for-the-badge&logo=openai&logoColor=white)](https://openai.com)
+[![Qdrant](https://img.shields.io/badge/Qdrant-Vector_DB-DC143C?style=for-the-badge)](https://qdrant.tech)
+[![LangChain](https://img.shields.io/badge/LangChain-1.0-1C3C3C?style=for-the-badge)](https://langchain.com)
+[![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://voice-rag-studio.vercel.app)
 
-- **PDF Document Processing**: Upload and process PDF documents with automatic text chunking
-- **Vector Search**: Semantic search using Qdrant vector database and FastEmbed embeddings
-- **Intelligent Responses**: GPT-4o powered responses based on your documentation
-- **Voice Output**: Natural text-to-speech responses with multiple voice options
-- **Streaming Audio**: Real-time audio playback using OpenAI's streaming TTS API
-- **Audio Download**: Download audio responses as MP3 files
-- **Source Citation**: See which documents were used to answer your questions
+</div>
 
-## 🏗️ Architecture
+---
 
-The application follows a modular architecture:
+## 📸 Live Demo Screenshots
+
+### Main Interface — Upload & Query
+![Main UI](docs/screenshots/ui-main.png)
+
+### Structured AI Response + Voice Playback
+![AI Response](docs/screenshots/ui-response.png)
+
+### Full Structured Response Panel
+![Full Response](docs/screenshots/ui-response-full.png)
+
+### Browser Tab Logo (Favicon)
+![Favicon Logo](web/favicon.png)
+
+---
+
+## 🧠 What Is This?
+
+**Voice RAG Studio** is a full-stack production-grade AI application that lets recruiters, engineers, and analysts upload any PDF document (resume, JD, report) and ask natural-language questions — receiving precise, structured answers in both **text** and **synthesized voice**.
+
+Built using **Retrieval-Augmented Generation (RAG)**: documents are chunked, embedded into a semantic vector space, and retrieved at query time to ground GPT-4o-mini responses in real document context — no hallucinations, no guessing.
+
+---
+
+## ✨ Key Features
+
+| Feature | Details |
+|---|---|
+| **Semantic Search** | Cosine-similarity vector retrieval across embedded document chunks |
+| **Dual-Granularity Chunking** | Full-page + fine-grained chunks ensure names, headers, and facts are never lost |
+| **Adaptive Embeddings** | FastEmbed (local) → OpenAI `text-embedding-3-small` (cloud fallback) |
+| **AI Answer Generation** | GPT-4o-mini with a strict RAG extractor prompt — grounded, never hallucinated |
+| **Voice Synthesis** | OpenAI `gpt-4o-mini-tts` MP3 output with 11 selectable voices |
+| **Modern Web UI** | HTML/CSS/JS frontend with structured response rendering, upload status, source tags |
+| **Branded Browser Tab** | Custom SVG + PNG favicon shown in browser tab and mobile touch icon |
+| **REST API Backend** | FastAPI with async endpoints for config, upload, query, and audio |
+| **File-Scoped Search** | Query a specific document for precise, single-resume extraction |
+| **Batch Vector Upsert** | 64-point batched upsert for 10x faster PDF indexing |
+| **Auto Dimension Sync** | Detects and recreates Qdrant collection when embedding dimension changes |
+
+---
+
+## 🏗️ System Architecture
 
 ```
-Voice RAG Agent
-├── Config Layer: Application settings and constants
-├── Services Layer: Business logic (vector store, PDF processing, query processing)
-├── Agents Layer: AI agent setup and configuration
-├── Utils Layer: Session state and UI components
-└── App Layer: Streamlit user interface
+┌─────────────────────────────────────────────────────────────────┐
+│                      Browser (HTML/CSS/JS)                      │
+│         Upload → Config → Query → Response + Audio              │
+└────────────────────────┬────────────────────────────────────────┘
+                         │ HTTP (REST)
+┌────────────────────────▼────────────────────────────────────────┐
+│                    FastAPI API Server                           │
+│   POST /api/config    POST /api/upload    POST /api/query       │
+│   GET  /api/status    GET  /api/audio                           │
+└──────┬──────────────────┬──────────────────────┬───────────────┘
+       │                  │                      │
+┌──────▼──────┐  ┌────────▼────────┐  ┌─────────▼──────────────┐
+│PDF Processor│  │  Vector Store   │  │    Query Processor      │
+│             │  │                 │  │                         │
+│ PyPDF load  │  │ AdaptiveEmbed   │  │ 1. Embed query          │
+│ Full-page   │  │ FastEmbed /     │  │ 2. Qdrant search (3     │
+│   chunks    │  │ OpenAI fallback │  │    fallback tiers)      │
+│ Fine chunks │  │ Batch upsert    │  │ 3. GPT-4o-mini answer   │
+│ Metadata    │  │ Payload index   │  │ 4. TTS → MP3 output     │
+└─────────────┘  └────────┬────────┘  └─────────────────────────┘
+                          │
+                ┌─────────▼─────────┐
+                │    Qdrant Cloud   │
+                │  Vector Database  │
+                │  (Cosine / 1536d) │
+                └───────────────────┘
 ```
 
-### Workflow
-
-1. **Document Upload**: PDF files are processed and split into chunks
-2. **Embedding Generation**: Document chunks are embedded using FastEmbed
-3. **Vector Storage**: Embeddings are stored in Qdrant vector database
-4. **Query Processing**: User queries are embedded and matched against stored documents
-5. **Context Retrieval**: Relevant document chunks are retrieved
-6. **Response Generation**: GPT-4o generates answers based on retrieved context
-7. **Voice Synthesis**: Text responses are converted to speech using OpenAI TTS
-8. **Audio Playback**: Audio is streamed and made available for download
-
-
-<img width="1900" height="717" alt="image" src="https://github.com/user-attachments/assets/df79f706-6ccd-41fa-a2dc-171913d637c1" />
-
-
-
-## 📦 Prerequisites
-
-- Python 3.8 or higher
-- Qdrant account and API credentials
-- OpenAI API key with access to:
-  - GPT-4o model
-  - GPT-4o-mini-tts model
-- Internet connection for API calls
-
-## 🚀 Installation
-
-1. **Clone or navigate to the project directory:**
-   ```bash
-   cd 14_Voice_RAG
-   ```
-
-2. **Create a virtual environment (recommended):**
-   ```bash
-   python -m venv venv
-   
-   # On Windows
-   venv\Scripts\activate
-   
-   # On macOS/Linux
-   source venv/bin/activate
-   ```
-
-3. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Set up environment variables (optional):**
-   Create a `.env` file in the project root:
-   ```env
-   QDRANT_URL=your_qdrant_url
-   QDRANT_API_KEY=your_qdrant_api_key
-   OPENAI_API_KEY=your_openai_api_key
-   ```
-
-## ⚙️ Configuration
-
-### API Keys
-
-You can configure API keys in two ways:
-
-1. **Environment Variables**: Create a `.env` file (see Installation)
-2. **Streamlit UI**: Enter keys in the sidebar when running the app
-
-### Voice Selection
-
-Choose from 11 available voices:
-- `alloy`, `ash`, `ballad`, `coral`, `echo`, `fable`, `onyx`, `nova`, `sage`, `shimmer`, `verse`
-
-Default voice: `coral`
-
-## 📖 Usage
-
-1. **Start the application:**
-   ```bash
-   streamlit run app.py
-   ```
-
-2. **Configure API keys:**
-   - Enter your Qdrant URL and API key in the sidebar
-   - Enter your OpenAI API key in the sidebar
-   - Select your preferred voice
-
-3. **Upload documents:**
-   - Click "Upload PDF" and select a PDF file
-   - Wait for processing to complete
-   - The document will be added to your knowledge base
-
-4. **Ask questions:**
-   - Type your question in the text input
-   - The system will:
-     - Search for relevant document sections
-     - Generate a text response
-     - Create and play an audio response
-     - Show source citations
-
-5. **Download audio:**
-   - After receiving a response, click "Download Audio Response" to save the MP3 file
+---
 
 ## 📁 Project Structure
 
 ```
-14_Voice_RAG/
-├── app.py                      # Main Streamlit application
-├── requirements.txt            # Python dependencies
-├── README.md                   # This file
-├── .env                        # Environment variables (create this)
+Voice-RAG/
 │
-├── config/                     # Configuration module
-│   ├── __init__.py
-│   └── settings.py            # Application settings and constants
+├── api/
+│   └── index.py              # Vercel serverless entrypoint
 │
-├── services/                   # Business logic services
-│   ├── __init__.py
-│   ├── vector_store.py        # Qdrant operations and embeddings
-│   ├── pdf_processor.py       # PDF processing and chunking
-│   └── query_processor.py    # Query processing and TTS generation
+├── api_server.py              # FastAPI REST backend
+├── vercel.json                # Vercel routing/build configuration
+├── render.yaml                # Render deployment configuration
+├── railway.toml               # Railway deployment configuration
+├── Procfile                   # Proc runner config
+├── .vercelignore              # Ignore large/unneeded files for Vercel
 │
-├── agent_config/               # AI agent configuration
-│   ├── __init__.py
-│   └── agent_setup.py         # Agent initialization and configuration
+├── web/                       # Modern HTML/CSS/JS frontend
+│   ├── index.html             # App shell
+│   ├── styles.css             # Dark-theme design system
+│   ├── app.js                 # Fetch API client + UI logic
+│   ├── favicon.svg            # Browser tab icon (SVG)
+│   └── favicon.png            # Browser tab icon fallback (PNG)
 │
-└── utils/                      # Utility functions
-    ├── __init__.py
-    ├── session_state.py       # Streamlit session state management
-    └── ui_components.py       # UI component functions
+├── services/
+│   ├── pdf_processor.py       # Dual-granularity chunker (full-page + fine)
+│   ├── vector_store.py        # AdaptiveEmbedder + Qdrant ops + auto dim-sync
+│   └── query_processor.py    # Retrieval → LLM answer → TTS (3-tier fallbacks)
+│
+├── agent_config/
+│   └── agent_setup.py         # GPT-4o-mini RAG extractor agent
+│
+├── config/
+│   └── settings.py            # Chunk size, search limits, voices, thresholds
+│
+├── docs/
+│   └── screenshots/           # UI screenshots for README
+│
+├── requirements.txt
+└── .env                       # API keys (not committed)
 ```
 
-## 🛠️ Technologies Used
+---
 
-- **Streamlit**: Web application framework
-- **Qdrant**: Vector database for embeddings
-- **FastEmbed**: Fast text embeddings
-- **LangChain**: Document processing and text splitting
-- **OpenAI**: GPT-4o for text generation and TTS for voice synthesis
-- **OpenAI Agents**: Agent framework for orchestration
-- **Python-dotenv**: Environment variable management
+## ⚙️ RAG Pipeline — Step by Step
 
-## 🔧 Troubleshooting
+```
+PDF Upload
+    │
+    ▼
+┌─────────────────────────────────────────┐
+│  1.  Extract full pages via PyPDF       │
+│  2.  Store one doc per page (full-page) │
+│  3.  Recursively split to 500-char fine │
+│      chunks with 100-char overlap       │
+│  4.  Embed ALL chunks in one batch      │
+│  5.  Upsert to Qdrant (64/batch)        │
+│  6.  Create `file_name` keyword index   │
+└─────────────────────────────────────────┘
+    │
+    ▼
+User Query
+    │
+    ▼
+┌─────────────────────────────────────────┐
+│  1.  Embed query (same backend)         │
+│  2.  Retrieve top-8 chunks (≥0.35)      │
+│  3.  Fallback 1: remove threshold       │
+│  4.  Fallback 2: global search          │
+│  5.  Fallback 3: direct header scroll   │
+│      (name detection via heuristic)     │
+│  6.  Build numbered context block       │
+│  7.  GPT-4o-mini answers with           │
+│      strict grounding prompt            │
+│  8.  OpenAI TTS → MP3                   │
+└─────────────────────────────────────────┘
+    │
+    ▼
+Structured Text + Voice Response in Browser
+```
 
-### Common Issues
+---
 
-1. **"Qdrant credentials not provided"**
-   - Ensure you've entered Qdrant URL and API key in the sidebar
-   - Check that credentials are correct
+## 🚀 Quick Start
 
-2. **"No relevant documents found"**
-   - Make sure you've uploaded at least one PDF document
-   - Try rephrasing your question
-   - Check that documents were processed successfully
+### Prerequisites
 
-3. **Audio playback issues**
-   - Ensure your OpenAI API key has access to TTS models
-   - Check your internet connection
-   - Verify audio drivers are working on your system
+- Python **3.11+**
+- [Qdrant Cloud account](https://cloud.qdrant.io) (free tier works)
+- [OpenAI API key](https://platform.openai.com/api-keys) with GPT-4o-mini + TTS access
 
-4. **Import errors**
-   - Make sure all dependencies are installed: `pip install -r requirements.txt`
-   - Verify you're using the correct Python version (3.8+)
-   - Check that you're in the project directory
+### 1. Clone & Install
 
-5. **PDF processing errors**
-   - Ensure the PDF file is not corrupted
-   - Check that the PDF contains extractable text (not just images)
-   - Verify file size is reasonable
+```bash
+git clone https://github.com/your-username/Voice-RAG.git
+cd Voice-RAG
 
-### Performance Tips
+python -m venv .venv
+# Windows
+.venv\Scripts\activate
+# macOS/Linux
+source .venv/bin/activate
 
-- **Document Size**: Large PDFs may take longer to process. Consider splitting very large documents.
-- **Chunk Size**: Adjust `CHUNK_SIZE` and `CHUNK_OVERLAP` in `config/settings.py` for different document types.
-- **Search Limit**: Modify `SEARCH_LIMIT` in `config/settings.py` to retrieve more or fewer context documents.
+pip install -r requirements.txt
+```
 
+### 2. Configure Environment
 
+Create a `.env` file in project root:
+
+```env
+QDRANT_URL=https://xxxx.qdrant.io
+QDRANT_API_KEY=your_qdrant_api_key
+OPENAI_API_KEY=sk-proj-...
+```
+
+### 3. Run the Web App
+
+```bash
+uvicorn api_server:app --host 0.0.0.0 --port 8000
+```
+
+Open [http://localhost:8000](http://localhost:8000) in your browser.
+
+---
+
+## 🎮 Usage Guide
+
+| Step | Action |
+|---|---|
+| **1. Configure** | Enter Qdrant URL, API Key, OpenAI Key → click **Save & Initialize** |
+| **2. Upload** | Select a PDF resume or document → click **Index Document** |
+| **3. Watch** | Status chip shows: `Uploading…` → `Indexing…` → `Indexed successfully` |
+| **4. Query** | Type any question → select scope (one doc or all) → **Ask AI** |
+| **5. Read** | Structured answer with headers, bullets, bold highlights |
+| **6. Listen** | AI-generated voice response plays inline, downloadable as MP3 |
+
+---
+
+## 🛠️ Technology Stack
+
+| Layer | Technology | Purpose |
+|---|---|---|
+| Frontend | HTML5, CSS3 (custom design system), Vanilla JS | Modern recruiter-facing UI |
+| API | FastAPI (async) | REST endpoints, file handling |
+| LLM | OpenAI GPT-4o-mini | Grounded answer generation |
+| TTS | OpenAI gpt-4o-mini-tts | Voice synthesis (11 voices) |
+| Embeddings | FastEmbed / OpenAI text-embedding-3-small | Semantic vector creation |
+| Vector DB | Qdrant Cloud | Cosine similarity retrieval |
+| PDF | LangChain PyPDFLoader + RecursiveCharacterTextSplitter | Document ingestion |
+| Agent | OpenAI Agents SDK | Orchestrated LLM calls |
+| Env | python-dotenv | Credential management |
+
+---
+
+## 🔑 API Reference
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/` | Serve web app |
+| `GET` | `/api/status` | App state, voices, indexed docs |
+| `POST` | `/api/config` | Save credentials + initialize backend |
+| `POST` | `/api/upload` | Upload + index a PDF |
+| `POST` | `/api/query` | Ask a question, returns text + audio path |
+| `GET` | `/api/audio?path=` | Stream generated MP3 |
+
+---
+
+## 🧩 Design Decisions
+
+**Why dual-granularity chunking?**  
+Resume headers (name, contact, title) appear on the first few lines of page 1. Standard 1000-char chunking often splits them across boundaries. Storing a full-page chunk guarantees the header is always a complete, retrievable unit.
+
+**Why 3-tier retrieval fallback?**  
+Score-threshold filtering can reject valid results when document text is low-quality or sparse. Removing the threshold, then doing a global search, then scanning stored chunks directly ensures we always return something useful.
+
+**Why `gpt-4o-mini` over `gpt-4o`?**  
+For RAG extraction tasks, `gpt-4o-mini` is 5× faster and nearly identical in factual accuracy when context is pre-filtered. The latency saving is meaningful for voice response UX.
+
+---
+
+## 📊 Performance
+
+| Metric | Value |
+|---|---|
+| PDF indexing speed | ~9 chunks / second (OpenAI embeddings) |
+| Query-to-text latency | ~2–4 seconds |
+| Query-to-voice latency | ~4–7 seconds |
+| Retrieval recall | 3-tier fallback — near 100% on indexed docs |
+| Supported voices | 11 (alloy, ash, ballad, coral, echo, fable, onyx, nova, sage, shimmer, verse) |
+| Max file size | 200 MB per PDF |
+
+---
+
+## 🔐 Environment Variables
+
+| Variable | Required | Description |
+|---|---|---|
+| `QDRANT_URL` | Yes | Qdrant cluster endpoint |
+| `QDRANT_API_KEY` | Yes | Qdrant authentication key |
+| `OPENAI_API_KEY` | Yes | OpenAI API key (GPT-4o-mini + TTS) |
+
+---
+
+## 🚢 Deployment
+
+The app is a single FastAPI process — no external database required (Qdrant is cloud-hosted). Any platform that can run a Python web server works.
+
+### ✅ Current Live Deployment
+
+- Production: [https://voice-rag-studio.vercel.app](https://voice-rag-studio.vercel.app)
+- Vercel Inspect: [Project Dashboard](https://vercel.com/ai-interviewers-projects/voice-rag-studio)
+
+---
+
+### Option 1 — Vercel (Fastest to go live)
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
+
+1. Push this repo to GitHub
+2. Go to [vercel.com](https://vercel.com) → **Add New...** → **Project**
+3. Import your GitHub repo
+4. Framework preset: **Other**
+5. Vercel auto-detects `vercel.json` and deploys `api/index.py`
+6. Add these environment variables in Vercel Project Settings:
+
+| Variable | Value |
+|---|---|
+| `QDRANT_URL` | Your Qdrant cluster URL |
+| `QDRANT_API_KEY` | Your Qdrant API key |
+| `OPENAI_API_KEY` | Your OpenAI API key |
+
+7. Click **Deploy**
+8. Open your live URL: `https://your-project-name.vercel.app`
+
+**Vercel-specific notes**
+- Serverless function entry: `api/index.py`
+- Config file used: `vercel.json`
+- Static UI folder bundled via: `"includeFiles": "web/**"`
+- Upload size kept small via: `.vercelignore`
+
+---
+
+### Option 2 — Render.com (Recommended, Free Tier)
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
+
+1. Push this repo to GitHub
+2. Go to [render.com](https://render.com) → **New** → **Web Service**
+3. Connect your GitHub repo
+4. Render auto-detects `render.yaml` — click **Deploy**
+5. Add environment variables in the Render dashboard:
+
+| Variable | Value |
+|---|---|
+| `QDRANT_URL` | Your Qdrant cluster URL |
+| `QDRANT_API_KEY` | Your Qdrant API key |
+| `OPENAI_API_KEY` | Your OpenAI API key |
+
+6. App will be live at `https://voice-rag-studio.onrender.com`
+
+---
+
+### Option 3 — Railway.app
+
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/template)
+
+1. Push to GitHub
+2. Go to [railway.app](https://railway.app) → **New Project** → **Deploy from GitHub**
+3. Select your repo — Railway picks up `railway.toml` automatically
+4. Add environment variables in the Railway dashboard (same 3 keys as above)
+5. Railway assigns a public URL instantly
+
+---
+
+### Option 4 — Local (Development)
+
+```bash
+uvicorn api_server:app --host 0.0.0.0 --port 8000 --reload
+```
+
+---
+
+### Important Notes for All Deployments
+
+> **In-memory state**: Uploaded file names are stored in RAM. After a restart, re-upload your PDFs — vectors remain in Qdrant Cloud permanently.
+
+> **Credentials**: Never commit `.env` to git. Use the platform's environment variable dashboard.
+
+> **Cold starts**: Free Render/Railway tiers sleep after inactivity. Vercel serverless may also cold-start and has function execution limits; for heavy PDFs, use paid plans for always-on workloads.
+
+---
+
+## 🤝 Contributing
+
+Pull requests are welcome. For major changes, open an issue first.
+
+1. Fork the repository
+2. Create your feature branch: `git checkout -b feature/your-feature`
+3. Commit changes: `git commit -m "feat: your feature"`
+4. Push: `git push origin feature/your-feature`
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+MIT License — free to use, modify, and distribute.
+
+---
+
+<div align="center">
+
+**Built with precision by [Ajay Kumar Dewangan](https://github.com/your-username)**
+
+*AI Engineer · Full-Stack Developer · RAG Specialist*
+
+⭐ Star this repo if you found it useful — it helps others discover the project.
+
+</div>

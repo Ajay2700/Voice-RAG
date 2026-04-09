@@ -25,6 +25,7 @@ venv/
 env/
 ENV/
 .venv
+.venv311/
 
 # Environment variables
 .env
@@ -33,6 +34,7 @@ ENV/
 # IDE
 .vscode/
 .idea/
+.cursor/
 *.swp
 *.swo
 *~
@@ -52,3 +54,7 @@ Thumbs.db
 # Project specific
 temp/
 tmp/
+.vercel/
+
+# Deployment/build local artifacts
+vercel-debug.log*
