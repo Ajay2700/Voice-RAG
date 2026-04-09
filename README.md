@@ -302,77 +302,9 @@ The app is a single FastAPI process — no external database required (Qdrant is
 ### ✅ Current Live Deployment
 
 - Production: [https://voice-rag-studio.vercel.app](https://voice-rag-studio.vercel.app)
-- Vercel Inspect: [Project Dashboard](https://vercel.com/ai-interviewers-projects/voice-rag-studio)
-
 ---
 
-### Option 1 — Vercel (Fastest to go live)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
-
-1. Push this repo to GitHub
-2. Go to [vercel.com](https://vercel.com) → **Add New...** → **Project**
-3. Import your GitHub repo
-4. Framework preset: **Other**
-5. Vercel auto-detects `vercel.json` and deploys `api/index.py`
-6. Add these environment variables in Vercel Project Settings:
-
-| Variable | Value |
-|---|---|
-| `QDRANT_URL` | Your Qdrant cluster URL |
-| `QDRANT_API_KEY` | Your Qdrant API key |
-| `OPENAI_API_KEY` | Your OpenAI API key |
-
-7. Click **Deploy**
-8. Open your live URL: `https://your-project-name.vercel.app`
-
-**Vercel-specific notes**
-- Serverless function entry: `api/index.py`
-- Config file used: `vercel.json`
-- Static UI folder bundled via: `"includeFiles": "web/**"`
-- Upload size kept small via: `.vercelignore`
-
----
-
-### Option 2 — Render.com (Recommended, Free Tier)
-
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
-
-1. Push this repo to GitHub
-2. Go to [render.com](https://render.com) → **New** → **Web Service**
-3. Connect your GitHub repo
-4. Render auto-detects `render.yaml` — click **Deploy**
-5. Add environment variables in the Render dashboard:
-
-| Variable | Value |
-|---|---|
-| `QDRANT_URL` | Your Qdrant cluster URL |
-| `QDRANT_API_KEY` | Your Qdrant API key |
-| `OPENAI_API_KEY` | Your OpenAI API key |
-
-6. App will be live at `https://voice-rag-studio.onrender.com`
-
----
-
-### Option 3 — Railway.app
-
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/template)
-
-1. Push to GitHub
-2. Go to [railway.app](https://railway.app) → **New Project** → **Deploy from GitHub**
-3. Select your repo — Railway picks up `railway.toml` automatically
-4. Add environment variables in the Railway dashboard (same 3 keys as above)
-5. Railway assigns a public URL instantly
-
----
-
-### Option 4 — Local (Development)
-
-```bash
-uvicorn api_server:app --host 0.0.0.0 --port 8000 --reload
-```
-
----
 
 ### Important Notes for All Deployments
 
@@ -396,11 +328,6 @@ Pull requests are welcome. For major changes, open an issue first.
 
 ---
 
-## 📄 License
-
-MIT License — free to use, modify, and distribute.
-
----
 
 <div align="center">
 
