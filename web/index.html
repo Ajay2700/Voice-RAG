@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Voice RAG Studio</title>
+    <link rel="stylesheet" href="/assets/styles.css" />
+  </head>
+  <body>
+    <div class="bg-glow"></div>
+    <main class="layout">
+      <aside class="panel sidebar">
+        <h2>Voice RAG Studio</h2>
+        <p class="muted">Recruiter-ready AI resume intelligence</p>
+
+        <label>Qdrant URL</label>
+        <input id="qdrantUrl" type="text" placeholder="https://..." />
+
+        <label>Qdrant API Key</label>
+        <input id="qdrantKey" type="password" placeholder="•••••••••••••••" />
+
+        <label>OpenAI API Key</label>
+        <input id="openaiKey" type="password" placeholder="sk-..." />
+
+        <label>Voice</label>
+        <select id="voiceSelect"></select>
+
+        <button id="saveConfigBtn" class="btn primary">Save & Initialize</button>
+        <div id="statusPill" class="pill">Not initialized</div>
+      </aside>
+
+      <section class="content">
+        <header class="hero panel">
+          <h1>Ask Better Questions, Hire Faster</h1>
+          <p>
+            Upload resumes and query structured candidate insights with voice-enabled answers.
+          </p>
+        </header>
+
+        <section class="grid">
+          <article class="panel">
+            <h3>1) Upload Resume / PDF</h3>
+            <input id="pdfFile" type="file" accept=".pdf" />
+            <button id="uploadBtn" class="btn">Index Document</button>
+            <div id="uploadState" class="status-chip">Idle</div>
+            <p id="uploadMsg" class="muted"></p>
+          </article>
+
+          <article class="panel">
+            <h3>Indexed Documents</h3>
+            <ul id="docList" class="doc-list"></ul>
+          </article>
+        </section>
+
+        <section class="panel">
+          <h3>2) Ask Candidate Questions</h3>
+          <textarea
+            id="queryInput"
+            rows="3"
+            placeholder="e.g., What is the candidate's full name and core ATS keywords?"
+          ></textarea>
+          <div class="query-actions">
+            <select id="searchScope">
+              <option>All documents</option>
+            </select>
+            <button id="askBtn" class="btn primary">Ask AI</button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h3>AI Response</h3>
+          <div id="responseText" class="response response-rich">Your answer will appear here.</div>
+          <div id="sourcesWrap" class="sources"></div>
+          <audio id="audioPlayer" controls></audio>
+        </section>
+      </section>
+    </main>
+
+    <div id="toast" class="toast hidden"></div>
+    <script src="/assets/app.js"></script>
+  </body>
+  </html>
+

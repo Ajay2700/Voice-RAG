@@ -1,0 +1,258 @@
+:root {
+  --bg: #080b16;
+  --panel: #11162a;
+  --panel-2: #171d33;
+  --text: #e8ecff;
+  --muted: #9ba6d9;
+  --primary: #6f7dff;
+  --primary-2: #9f65ff;
+  --ok: #2ad490;
+  --danger: #ff5d7a;
+  --border: rgba(255, 255, 255, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  background: radial-gradient(circle at 20% 0%, #1a2150 0%, var(--bg) 40%);
+  color: var(--text);
+}
+
+.bg-glow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 90% 10%, rgba(159, 101, 255, 0.22), transparent 35%);
+}
+
+.layout {
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+
+.panel {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px;
+  backdrop-filter: blur(8px);
+}
+
+.sidebar h2 {
+  margin: 0;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+label {
+  display: block;
+  margin: 12px 0 6px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+  padding: 10px 12px;
+  font: inherit;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.btn {
+  margin-top: 12px;
+  border: 1px solid var(--border);
+  background: #252d4a;
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.btn.primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  border-color: transparent;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.pill {
+  margin-top: 14px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  width: fit-content;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.pill.ok {
+  color: var(--ok);
+  border-color: rgba(42, 212, 144, 0.4);
+}
+
+.status-chip {
+  margin-top: 10px;
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.82rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.status-chip.busy {
+  color: #ffd76a;
+  border-color: rgba(255, 215, 106, 0.45);
+}
+
+.status-chip.success {
+  color: var(--ok);
+  border-color: rgba(42, 212, 144, 0.45);
+}
+
+.status-chip.error {
+  color: var(--danger);
+  border-color: rgba(255, 93, 122, 0.45);
+}
+
+.content {
+  display: grid;
+  gap: 16px;
+}
+
+.hero h1 {
+  margin: 0;
+}
+
+.hero p {
+  margin: 8px 0 0;
+  color: var(--muted);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.doc-list {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+}
+
+.query-actions {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+}
+
+.response {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  min-height: 70px;
+}
+
+.response-rich {
+  line-height: 1.65;
+  color: #eaf0ff;
+}
+
+.response-rich p {
+  margin: 0 0 10px;
+}
+
+.response-rich p:last-child {
+  margin-bottom: 0;
+}
+
+.response-rich ul {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.response-rich li {
+  margin: 4px 0;
+}
+
+.response-rich strong {
+  color: #ffffff;
+}
+
+.sources {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.source-tag {
+  border: 1px solid var(--border);
+  background: #1a2140;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+audio {
+  margin-top: 12px;
+  width: 100%;
+}
+
+.toast {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  background: #10162a;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--danger);
+  color: var(--text);
+  padding: 12px 14px;
+  border-radius: 10px;
+}
+
+.toast.ok {
+  border-left-color: var(--ok);
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 980px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+

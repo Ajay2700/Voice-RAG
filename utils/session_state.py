@@ -15,9 +15,8 @@ def init_session_state() -> None:
         "client": None,
         "embedding_model": None,
         "processor_agent": None,
-        "tts_agent": None,
         "selected_voice": DEFAULT_VOICE,
-        "processed_documents": []
+        "processed_documents": [],
     }
     
     for key, value in defaults.items():

@@ -2,18 +2,19 @@
 
 COLLECTION_NAME = "voice-rag-agent"
 
-# Available voices for TTS
 AVAILABLE_VOICES = [
-    "alloy", "ash", "ballad", "coral", "echo", "fable", 
+    "alloy", "ash", "ballad", "coral", "echo", "fable",
     "onyx", "nova", "sage", "shimmer", "verse"
 ]
 
-# Default voice
 DEFAULT_VOICE = "coral"
 
-# Text splitter settings
-CHUNK_SIZE = 1000
-CHUNK_OVERLAP = 200
+# Smaller chunks preserve fine-grained facts (names, dates, skills).
+# Full-page chunks are also stored separately by the PDF processor
+# so header sections are never lost across chunk boundaries.
+CHUNK_SIZE = 500
+CHUNK_OVERLAP = 100
 
-# Vector search settings
-SEARCH_LIMIT = 3
+# Retrieve more candidates; score threshold filters weak matches.
+SEARCH_LIMIT = 8
+SCORE_THRESHOLD = 0.35
